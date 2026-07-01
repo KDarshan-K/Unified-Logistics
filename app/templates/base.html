@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Unified Logistics Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <div class="flex min-h-screen">
+        <aside class="w-56 bg-slate-900 text-white p-6 space-y-4">
+            <h1 class="text-xl font-bold mb-8">🚚 Logistics Hub</h1>
+            <a href="/" class="block hover:text-sky-400">Dashboard</a>
+            <a href="/shipments" class="block hover:text-sky-400">Shipments</a>
+            <a href="/drivers" class="block hover:text-sky-400">Drivers</a>
+        </aside>
+        <main class="flex-1 p-8">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

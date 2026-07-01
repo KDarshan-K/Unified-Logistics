@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-6">Drivers</h2>
+<table class="w-full bg-white rounded-xl shadow overflow-hidden">
+    <thead class="bg-slate-100 text-left text-sm">
+        <tr><th class="p-3">ID</th><th class="p-3">Status</th><th class="p-3">Vehicle</th><th class="p-3">Location</th></tr>
+    </thead>
+    <tbody>
+        {% for d in drivers %}
+        <tr class="border-t hover:bg-slate-50">
+            <td class="p-3">{{ d._id }}</td>
+            <td class="p-3">
+                <span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700">{{ d.status }}</span>
+            </td>
+            <td class="p-3">{{ d.vehicle }}</td>
+            <td class="p-3">{% if d.location %}{{ d.location.coordinates }}{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

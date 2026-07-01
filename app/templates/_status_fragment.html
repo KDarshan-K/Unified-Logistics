@@ -1,0 +1,3 @@
+<p>Status: <strong>{{ shipment.status_logs[-1].status if shipment.status_logs else "Pending" }}</strong></p>
+<p>Location: {{ shipment.current_location.coordinates if shipment.current_location else "Unknown" }}</p>
+<p>Driver: {{ shipment.driver_id or "Unassigned" }}</p>

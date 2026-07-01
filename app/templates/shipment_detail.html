@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-6">Shipment {{ shipment._id }}</h2>
+
+{% if shipment %}
+<div hx-get="/shipment/{{ shipment._id }}/status-fragment"
+     hx-trigger="every 3s"
+     hx-swap="innerHTML"
+     class="bg-white rounded-xl shadow p-6 max-w-md">
+    {% include "_status_fragment.html" %}
+</div>
+
+{% if shipment.return_info %}
+<div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md">
+    <p class="font-semibold text-amber-700">Return Initiated</p>
+    <p class="text-sm">Reason: {{ shipment.return_info.reason }}</p>
+    <p class="text-sm">Status: {{ shipment.return_info.status }}</p>
+</div>
+{% endif %}
+{% else %}
+<p class="text-slate-500">Shipment not found.</p>
+{% endif %}
+{% endblock %}

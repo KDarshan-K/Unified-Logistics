@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
+<div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-slate-500">Total Shipments</p>
+        <p class="text-3xl font-bold">{{ shipments|length }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-slate-500">Active Drivers</p>
+        <p class="text-3xl font-bold">{{ drivers|length }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-sm text-slate-500">Returns by Warehouse</p>
+        <pre class="text-xs whitespace-pre-wrap">{{ returns }}</pre>
+    </div>
+</div>
+
+<h3 class="text-lg font-semibold mb-3">Recent Shipments</h3>
+<table class="w-full bg-white rounded-xl shadow overflow-hidden">
+    <thead class="bg-slate-100 text-left text-sm">
+        <tr><th class="p-3">ID</th><th class="p-3">Status</th><th class="p-3">Driver</th></tr>
+    </thead>
+    <tbody>
+        {% for s in shipments[:5] %}
+        <tr class="border-t hover:bg-slate-50">
+            <td class="p-3"><a href="/shipments/{{ s._id }}" class="text-sky-600">{{ s._id }}</a></td>
+            <td class="p-3">
+                {% if s.status_logs %}{{ s.status_logs[-1].status }}{% else %}—{% endif %}
+            </td>
+            <td class="p-3">{{ s.driver_id or "Unassigned" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
