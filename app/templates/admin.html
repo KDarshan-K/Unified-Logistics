@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-2">Admin Query Panel</h2>
+<p class="text-slate-500 mb-6">Ask anything about your shipments and drivers in plain English.</p>
+
+<div class="bg-white rounded-xl shadow p-6 max-w-2xl mb-6">
+    <textarea
+        id="question"
+        rows="3"
+        placeholder="e.g. How many shipments are unassigned? Which warehouse has the most returns?"
+        class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none mb-4"
+    ></textarea>
+    <button
+        onclick="runQuery()"
+        class="bg-sky-600 text-white px-5 py-2 rounded-lg hover:bg-sky-700 text-sm font-medium">
+        Run Query
+    </button>
+</div>
+
+<!-- Example queries -->
+<div class="max-w-2xl mb-6">
+    <p class="text-xs text-slate-400 mb-2">Try these:</p>
+    <div class="flex flex-wrap gap-2">
+        {% for q in [
+            "How many shipments are unassigned?",
+            "How many drivers are currently searching?",
+            "How many shipments have been returned?",
+            "Count shipments by status",
+            "Which warehouse has the most returns?"
+        ] %}
+        <button onclick="setQuestion('{{ q }}')"
+            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-full">
+            {{ q }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Results -->
+<div id="results" class="max-w-2xl hidden">
+    <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-xs text-slate-400 mb-1">Generated Pipeline</p>
+        <pre id="pipeline" class="text-xs bg-slate-50 rounded p-3 overflow-x-auto mb-4"></pre>
+
+        <p class="text-xs text-slate-400 mb-1">Results <span id="count" class="font-semibold text-slate-600"></span></p>
+        <pre id="output" class="text-xs bg-slate-50 rounded p-3 overflow-x-auto"></pre>
+    </div>
+</div>
+
+<!-- Loading state -->
+<div id="loading" class="hidden text-sm text-slate-500 mt-4">Running query...</div>
+
+<!-- Error state -->
+<div id="error" class="hidden max-w-2xl mt-4 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
+
+<script>
+function setQuestion(q) {
+    document.getElementById("question").value = q;
+}
+
+async function runQuery() {
+    const question = document.getElementById("question").value.trim();
+    if (!question) return;
+
+    document.getElementById("results").classList.add("hidden");
+    document.getElementById("error").classList.add("hidden");
+    document.getElementById("loading").classList.remove("hidden");
+
+    try {
+        const res = await fetch("/admin/query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        document.getElementById("loading").classList.add("hidden");
+
+        if (data.error) {
+            document.getElementById("error").textContent = "Error: " + data.error;
+            document.getElementById("error").classList.remove("hidden");
+            return;
+        }
+
+        document.getElementById("pipeline").textContent = JSON.stringify(data.pipeline, null, 2);
+        document.getElementById("output").textContent = JSON.stringify(data.results, null, 2);
+        document.getElementById("count").textContent = `(${data.count} records)`;
+        document.getElementById("results").classList.remove("hidden");
+
+    } catch (err) {
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("error").textContent = "Request failed: " + err.message;
+        document.getElementById("error").classList.remove("hidden");
+    }
+}
+</script>
+{% endblock %}

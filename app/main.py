@@ -5,6 +5,7 @@ from app.routes import shipment_routes, driver_routes, analytics_routes
 from app.services.analytics_service import returns_by_warehouse
 from app.services.shipment_service import get_all_shipments, get_shipment
 from app.services.driver_service import get_all_drivers
+from app.routes import shipment_routes, driver_routes, analytics_routes, query_routes
 
 app = FastAPI()
 
@@ -14,7 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 app.include_router(shipment_routes.router)
 app.include_router(driver_routes.router)
 app.include_router(analytics_routes.router)
-
+app.include_router(query_routes.router)
 @app.get("/")
 def dashboard(request: Request):
     return templates.TemplateResponse("dashboard.html", {
