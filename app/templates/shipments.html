@@ -1,23 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-2xl font-semibold mb-6">Shipment {{ shipment._id }}</h2>
-
-{% if shipment %}
-<div hx-get="/shipment/{{ shipment._id }}/status-fragment"
-     hx-trigger="every 3s"
-     hx-swap="innerHTML"
-     class="bg-white rounded-xl shadow p-6 max-w-md">
-    {% include "_status_fragment.html" %}
-</div>
-
-{% if shipment.return_info %}
-<div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-md">
-    <p class="font-semibold text-amber-700">Return Initiated</p>
-    <p class="text-sm">Reason: {{ shipment.return_info.reason }}</p>
-    <p class="text-sm">Status: {{ shipment.return_info.status }}</p>
-</div>
-{% endif %}
-{% else %}
-<p class="text-slate-500">Shipment not found.</p>
-{% endif %}
+<h2 class="text-2xl font-semibold mb-6">Shipments</h2>
+<table class="w-full bg-white rounded-xl shadow overflow-hidden">
+    <thead class="bg-slate-100 text-left text-sm">
+        <tr>
+            <th class="p-3">ID</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Driver</th>
+            <th class="p-3">Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in shipments %}
+        <tr class="border-t hover:bg-slate-50">
+            <td class="p-3">
+                <a href="/shipments/{{ s['_id'] }}" class="text-sky-600">{{ s['_id'] }}</a>
+            </td>
+            <td class="p-3">
+                {% if s['status_logs'] %}
+                    <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-700">
+                        {{ s['status_logs'][-1]['status'] }}
+                    </span>
+                {% else %}
+                    <span class="text-slate-400">No status yet</span>
+                {% endif %}
+            </td>
+            <td class="p-3">{{ s.get('driver_id') or 'Unassigned' }}</td>
+            <td class="p-3">
+                {% if s.get('current_location') %}
+                    {{ s['current_location']['coordinates'] }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
